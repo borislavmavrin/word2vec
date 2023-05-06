@@ -98,7 +98,7 @@ def sgd(f, x0, step, iterations, postprocessing=None, useSaved=False,
         if iter % ANNEAL_EVERY == 0:
             step *= 0.5
 
-    return x
+    return x, exploss
 
 
 def sanity_check():

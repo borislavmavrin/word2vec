@@ -38,13 +38,14 @@ wordVectors = np.concatenate(
      np.zeros((nWords, dimVectors))),
     axis=0
 )
-wordVectors = sgd(
+wordVectors, loss = sgd(
     lambda vec: word2vec_sgd_wrapper(skipgram, tokens, vec, dataset, C,
                                      negSamplingLossAndGradient),
     wordVectors, 0.3, 40000, None, True, PRINT_EVERY=10)
 # Note that normalization is not called here. This is not a bug,
 # normalizing during training loses the notion of length.
 
+assert loss <= 10.5, "loss is too high."
 print("sanity check: cost at convergence should be around or below 10")
 print("training took %d seconds" % (time.time() - startTime))
 
