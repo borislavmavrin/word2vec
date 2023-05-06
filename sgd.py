@@ -1,3 +1,5 @@
+"""SGD algorithm."""
+
 import pickle
 import glob
 import random
@@ -9,10 +11,7 @@ SAVE_PARAMS_EVERY = 5000
 
 
 def load_saved_params():
-    """
-    A helper function that loads previously saved parameters and resets
-    iteration start.
-    """
+    """Load previously saved parameters and reset iteration start."""
     st = 0
     for f in glob.glob("saved_params_*.npy"):
         iter = int(op.splitext(op.basename(f))[0].split("_")[2])
@@ -31,6 +30,7 @@ def load_saved_params():
 
 
 def save_params(iter, params):
+    """Save model parameters."""
     params_file = "saved_params_%d.npy" % iter
     np.save(params_file, params)
     with open("saved_state_%d.pickle" % iter, "wb") as f:
@@ -39,7 +39,7 @@ def save_params(iter, params):
 
 def sgd(f, x0, step, iterations, postprocessing=None, useSaved=False,
         PRINT_EVERY=10):
-    """ Stochastic Gradient Descent
+    """Stochastic Gradient Descent.
 
     Implement the stochastic gradient descent method in this function.
 
@@ -58,7 +58,6 @@ def sgd(f, x0, step, iterations, postprocessing=None, useSaved=False,
     Return:
     x -- the parameter value after SGD finishes
     """
-
     # Anneal learning rate every several iterations
     ANNEAL_EVERY = 20000
 
@@ -103,6 +102,7 @@ def sgd(f, x0, step, iterations, postprocessing=None, useSaved=False,
 
 
 def sanity_check():
+    """Test SGD algorithm."""
     def quad(x):
         return (np.sum(x ** 2), x * 2)
 

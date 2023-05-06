@@ -1,13 +1,15 @@
-#!/usr/bin/env python
+"""Load and preprocess Stanford Sentiment Treebank dataset."""
 # -*- coding: utf-8 -*-
 
-import pickle
 import numpy as np
-import os
 import random
 
+
 class StanfordSentiment:
-    def __init__(self, path=None, tablesize = 1000000):
+    """Stanford Sentiment Treebank dataset for word2vec."""
+
+    def __init__(self, path=None, tablesize=1000000):
+        """Init path and tablesize."""
         if not path:
             path = "utils/datasets/stanfordSentimentTreebank"
 
@@ -15,6 +17,7 @@ class StanfordSentiment:
         self.tablesize = tablesize
 
     def tokens(self):
+        """Tokenize dataset."""
         if hasattr(self, "_tokens") and self._tokens:
             return self._tokens
 
@@ -27,7 +30,7 @@ class StanfordSentiment:
         for sentence in self.sentences():
             for w in sentence:
                 wordcount += 1
-                if not w in tokens:
+                if w not in tokens:
                     tokens[w] = idx
                     revtokens += [w]
                     tokenfreq[w] = 1
@@ -47,6 +50,7 @@ class StanfordSentiment:
         return self._tokens
 
     def sentences(self):
+        """Extract sentences."""
         if hasattr(self, "_sentences") and self._sentences:
             return self._sentences
 
@@ -69,6 +73,7 @@ class StanfordSentiment:
         return self._sentences
 
     def numSentences(self):
+        """Count sentences."""
         if hasattr(self, "_numSentences") and self._numSentences:
             return self._numSentences
         else:
@@ -76,6 +81,7 @@ class StanfordSentiment:
             return self._numSentences
 
     def allSentences(self):
+        """Sample sentences."""
         if hasattr(self, "_allsentences") and self._allsentences:
             return self._allsentences
 
@@ -83,8 +89,8 @@ class StanfordSentiment:
         rejectProb = self.rejectProb()
         tokens = self.tokens()
         allsentences = [[w for w in s
-            if 0 >= rejectProb[tokens[w]] or random.random() >= rejectProb[tokens[w]]]
-            for s in sentences * 30]
+                         if 0 >= rejectProb[tokens[w]] or random.random() >= rejectProb[tokens[w]]]
+                        for s in sentences * 30]
 
         allsentences = [s for s in allsentences if len(s) > 1]
 
@@ -93,14 +99,15 @@ class StanfordSentiment:
         return self._allsentences
 
     def getRandomContext(self, C=5):
+        """Sample random context."""
         allsent = self.allSentences()
         sentID = random.randint(0, len(allsent) - 1)
         sent = allsent[sentID]
         wordID = random.randint(0, len(sent) - 1)
 
         context = sent[max(0, wordID - C):wordID]
-        if wordID+1 < len(sent):
-            context += sent[wordID+1:min(len(sent), wordID + C + 1)]
+        if wordID + 1 < len(sent):
+            context += sent[wordID + 1:min(len(sent), wordID + C + 1)]
 
         centerword = sent[wordID]
         context = [w for w in context if w != centerword]
@@ -111,6 +118,7 @@ class StanfordSentiment:
             return self.getRandomContext(C)
 
     def sent_labels(self):
+        """Extract sentiment labels."""
         if hasattr(self, "_sent_labels") and self._sent_labels:
             return self._sent_labels
 
@@ -119,7 +127,8 @@ class StanfordSentiment:
         with open(self.path + "/dictionary.txt", "r") as f:
             for line in f:
                 line = line.strip()
-                if not line: continue
+                if not line:
+                    continue
                 splitted = line.split("|")
                 dictionary[splitted[0].lower()] = int(splitted[1])
                 phrases += 1
@@ -133,7 +142,8 @@ class StanfordSentiment:
                     continue
 
                 line = line.strip()
-                if not line: continue
+                if not line:
+                    continue
                 splitted = line.split("|")
                 labels[int(splitted[0])] = float(splitted[1])
 
@@ -148,6 +158,7 @@ class StanfordSentiment:
         return self._sent_labels
 
     def dataset_split(self):
+        """Split data for training."""
         if hasattr(self, "_split") and self._split:
             return self._split
 
@@ -166,11 +177,13 @@ class StanfordSentiment:
         return self._split
 
     def getRandomTrainSentence(self):
+        """Sample sentence for sentiment classification."""
         split = self.dataset_split()
         sentId = split[0][random.randint(0, len(split[0]) - 1)]
         return self.sentences()[sentId], self.categorify(self.sent_labels()[sentId])
 
     def categorify(self, label):
+        """Convert probability to label."""
         if label <= 0.2:
             return 0
         elif label <= 0.4:
@@ -183,19 +196,24 @@ class StanfordSentiment:
             return 4
 
     def getDevSentences(self):
+        """Get dev split."""
         return self.getSplitSentences(2)
 
     def getTestSentences(self):
+        """Get test split."""
         return self.getSplitSentences(1)
 
     def getTrainSentences(self):
+        """Get train split."""
         return self.getSplitSentences(0)
 
     def getSplitSentences(self, split=0):
+        """Get sentences for the split."""
         ds_split = self.dataset_split()
         return [(self.sentences()[i], self.categorify(self.sent_labels()[i])) for i in ds_split[split]]
 
     def sampleTable(self):
+        """Sample table for negative words."""
         if hasattr(self, '_sampleTable') and self._sampleTable is not None:
             return self._sampleTable
 
@@ -228,6 +246,7 @@ class StanfordSentiment:
         return self._sampleTable
 
     def rejectProb(self):
+        """Compute reject probability distribution."""
         if hasattr(self, '_rejectProb') and self._rejectProb is not None:
             return self._rejectProb
 
@@ -245,4 +264,5 @@ class StanfordSentiment:
         return self._rejectProb
 
     def sampleTokenIdx(self):
+        """Sample word."""
         return self.sampleTable()[random.randint(0, self.tablesize - 1)]
