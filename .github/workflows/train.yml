@@ -2,7 +2,7 @@ name: train
 run-name: train
 on: [pull_request]
 jobs:
-  Explore-GitHub-Actions:
+  running-train:
     runs-on: [self-hosted, Linux, X64]
     steps:
     - uses: actions/checkout@v3

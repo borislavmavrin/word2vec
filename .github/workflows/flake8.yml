@@ -2,7 +2,7 @@ name: flake8
 run-name: flake8
 on: [pull_request]
 jobs:
-  Explore-GitHub-Actions:
+  running-flake8:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

@@ -2,7 +2,7 @@ name: coverage
 run-name: coverage
 on: [pull_request]
 jobs:
-  Explore-GitHub-Actions:
+  running-coverage:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
