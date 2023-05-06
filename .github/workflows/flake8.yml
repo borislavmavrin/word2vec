@@ -1,0 +1,17 @@
+name: flake8
+run-name: flake8
+on:
+  push
+  pull_request
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install -r requirements.txt
+    - run: pip install flake8 flake8-docstrings
+    - run: flake8 --ignore E501 *.py

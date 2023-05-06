@@ -1,0 +1,17 @@
+name: coverage
+run-name: coverage
+on:
+  push
+  pull_request
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install -r requirements.txt
+    - run: pip install pytest coverage
+    - run: coverage run -m pytest word2vec.py sgd.py
