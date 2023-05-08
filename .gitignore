@@ -1,0 +1,7 @@
+venv/
+*.pyc
+*.npy
+*.png
+.idea/
+.pytest_cache/
+.coverage

@@ -1,9 +1,9 @@
-name: coverage
-run-name: coverage
+name: train
+run-name: train
 on: [pull_request]
 jobs:
-  running-coverage:
-    runs-on: ubuntu-latest
+  running-train:
+    runs-on: [self-hosted, Linux, X64]
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
@@ -11,5 +11,4 @@ jobs:
         python-version: '3.10'
         cache: 'pip' # caching pip dependencies
     - run: pip install -r requirements.txt
-    - run: pip install pytest coverage
-    - run: coverage run -m pytest word2vec.py sgd.py
+    - run: python run.py
