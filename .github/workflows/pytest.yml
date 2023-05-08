@@ -12,4 +12,4 @@ jobs:
         cache: 'pip' # caching pip dependencies
     - run: pip install -r requirements.txt
     - run: pip install pytest
-    - run: pytest word2vec.py sgd.py
+    - run: pytest tests
