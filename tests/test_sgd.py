@@ -1,3 +1,4 @@
+"""Test SGD algorithm."""
 import numpy as np
 from sgd import sgd
 
